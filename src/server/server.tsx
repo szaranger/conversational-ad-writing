@@ -1,12 +1,12 @@
 import type { Request, Response } from 'express';
-
-import { middleware } from './middleware';
-
 import { renderToString } from 'react-dom/server';
 import Helmet from 'react-helmet';
-import { renderDocument } from 'src/server/render';
+
 import App from 'src/App/App';
+import { renderDocument } from 'src/server/render';
 import { serializeConfig } from 'src/server/script-tags';
+
+import { middleware } from './middleware';
 
 interface RenderCallbackProps {
   SkuProvider: any;
