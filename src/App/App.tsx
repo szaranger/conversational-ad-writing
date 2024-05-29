@@ -1,16 +1,39 @@
 import 'braid-design-system/reset';
 
-import { Box, BraidProvider, Stack } from 'braid-design-system';
+import { Box, BraidProvider, Loader, Stack } from 'braid-design-system';
 import apac from 'braid-design-system/themes/apac';
 import { StrictMode, useState } from 'react';
 
 import { ChatMessage } from 'src/App/components/chatMessage';
 import { UserInput } from 'src/App/components/userInput';
 
-export default () => {
-  const [messages, setMessage] = useState<string[]>([]);
+const AD_AGENT = { id: 'ad_agent', title: 'Ad agent' };
+const YOU = { id: 'you', title: 'You' };
 
-  const inputCallback = () => {};
+interface Message {
+  author: { id: string; title: string };
+  message: string;
+}
+
+export default () => {
+  const [isHidden, setIsHidden] = useState(true);
+  const [messages, setMessages] = useState([{
+    author: AD_AGENT,
+    message: "G’day! Describe your role to us, and we will generate a draft for you!",
+  }]);
+
+  const handleSend = (input: string) => {
+    const newMessage = {
+      author: YOU,
+      message: input,
+    };
+
+    setIsHidden(false); 
+    setTimeout(() => { 
+      setMessages([...messages, newMessage]);
+      setIsHidden(true); 
+    }, 2000);
+  };
 
   return (
     <StrictMode>
@@ -22,26 +45,17 @@ export default () => {
           margin="gutter"
         >
           <Stack space="medium">
-            <ChatMessage
-              author="Ad agent"
-              message="G’day! Describe your role to us, and we will generate a draft for you!"
-              alignment="left"
-            />
-            {/* <ChatMessage
-            author="You"
-            message="I’m looking for a boiler mechanic that can work for me at least
-              4 days a week, with at least 5 years experience and a Queensland
-              license"
-            alignment="right"
-          />
-          <ChatMessage
-            author="Ad agent"
-            message="Sure. What kind of salary are you willing to offer?"
-            alignment="left"
-          /> */}
+            {messages.map((message: Message, index: number) =>
+              <ChatMessage
+                author={message.author.title}
+                message={message.message}
+                alignment={message.author.id === 'ad_agent' ? 'left' : 'right'}
+                key={index}
+              />)}
+              {!isHidden && <Loader />}
           </Stack>
 
-          <UserInput callback={inputCallback} />
+          <UserInput onSend={handleSend} />
         </Box>
       </BraidProvider>
     </StrictMode>
