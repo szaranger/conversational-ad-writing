@@ -3,8 +3,10 @@ import { Box, Button, Textarea, Stack } from 'braid-design-system';
 import { type ChangeEvent, useState } from 'react';
 
 export const UserInput = ({
+  onChange,
   onSend,
 }: {
+  onChange: (text: string) => void;
   onSend: (message: string) => void;
 }) => {
   const [inputValue, setInputValue] = useState<string>('');
@@ -12,6 +14,7 @@ export const UserInput = ({
   const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const { value } = event.target;
     setInputValue(value);
+    onChange(value);
   };
 
   const handleSend = () => {

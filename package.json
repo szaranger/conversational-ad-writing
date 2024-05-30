@@ -11,7 +11,10 @@
     "format": "sku format"
   },
   "dependencies": {
+    "@anthropic-ai/bedrock-sdk": "^0.9.8",
+    "axios": "^1.7.2",
     "braid-design-system": "32.18.0",
+    "lodash": "^4.17.21",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-helmet": "^6.1.0",
