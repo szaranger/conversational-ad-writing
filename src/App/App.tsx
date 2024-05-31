@@ -1,6 +1,6 @@
 import 'braid-design-system/reset';
 
-import { BraidProvider, Box, Heading, Loader, Page, PageBlock, Stack, Textarea } from 'braid-design-system';
+import { BraidProvider, Box, Button, Heading, Loader, Page, PageBlock, Stack, Textarea } from 'braid-design-system';
 import apac from 'braid-design-system/themes/apac';
 import { isEmpty } from 'lodash';
 import { StrictMode, useState } from 'react';
@@ -22,6 +22,7 @@ export default  () => {
   const [lastMessage, setLastMessage] = useState('');
   const [prompt, setPrompt] = useState('');
   const [result, setResult] = useState('');
+  
   const [messages, setMessages] = useState([{
     author: AD_AGENT,
     message: "G’day! Describe your role to us, and we will generate a draft for you!",
@@ -29,6 +30,15 @@ export default  () => {
 
   const handleChange = (input: string) => {
     setLastMessage(input);
+  };
+
+  const handleClear = () => {
+    setPrompt('');
+    setMessages([]);
+    setIsHidden(true);
+    setIsDraftReady(false);
+    setLastMessage('');
+    setResult('');
   };
 
   const handleSend = async (input: string) => {
@@ -47,11 +57,23 @@ export default  () => {
 
     setPrompt(`${prompt} ${input}`);
 
-    if (isEmpty(salary)) {
+    const promptUser = (message: string) => {
       setTimeout(() => { 
-        setMessages([...messages, newMessage, { author: AD_AGENT, message: "Sure. What kind of salary are you willing to offer?" }]);
+        setMessages([...messages, newMessage, { author: AD_AGENT, message }]);
         setIsHidden(true); 
       }, 2000);
+    }
+
+    if (isEmpty(jobTitle)) {
+      promptUser("Sure. What's the title of the job?");
+
+      return;
+    } else if (isEmpty(location)) {
+      promptUser("OK. Where is this job located?");
+
+      return;
+    } else if (isEmpty(salary)) {
+      promptUser("Sure. What kind of salary are you willing to offer?");
 
       return;
     }
@@ -104,21 +126,26 @@ export default  () => {
                   {!isHidden && <Loader />}
               </Stack>
             </Stack>
+            <Stack space="medium">
             {isDraftReady ? 
-            <Box marginTop="medium">
-              <Stack space="medium">
-                <Heading level="2">Draft</Heading>
-                <Textarea
-                  id="draftTextarea"
-                  label="🎉"
-                  lines={25}
-                  value={result as string}
-                />
-              </Stack>
-            </Box> : <UserInput onChange={handleChange} onSend={handleSend} />}
+              <Box marginTop="medium">
+                <Stack space="medium">
+                  <Heading level="2">Draft</Heading>
+                  <Textarea
+                    id="draftTextarea"
+                    label="🎉"
+                    lines={25}
+                    value={result as string}
+                  />
+                </Stack>
+              </Box> : <UserInput onChange={handleChange} onSend={handleSend} />}
+            <Button tone="neutral" onClick={handleClear}>Clear</Button>
+            </Stack>
           </PageBlock>
         </Page>
       </BraidProvider>
     </StrictMode>
   );
 };
+
+
